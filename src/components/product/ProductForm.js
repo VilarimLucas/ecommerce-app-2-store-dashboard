@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../services/api'; // Importar a configuração da API
 
 const ProductForm = ({ initialData = {}, onSubmit }) => {
   const [productName, setProductName] = useState(initialData.productName || '');
-  const [productPrice, setProductPrice] = useState(initialData.productPrice || 0); // Valor numérico, inicialize como 0
+  const [productPrice, setProductPrice] = useState(initialData.productPrice || 0);
   const [productDescription, setProductDescription] = useState(initialData.productDescription || '');
   const [productImage, setProductImage] = useState(null);
-  const [previewImage, setPreviewImage] = useState(initialData.productImage ? `http://localhost:4040/images/${initialData.productImage}` : null);
+  const [previewImage, setPreviewImage] = useState(
+    initialData.productImage ? `${api.defaults.baseURL}/images/${initialData.productImage}` : null
+  );
   const [imageName, setImageName] = useState(initialData.productImage || 'Nenhuma imagem selecionada');
 
   useEffect(() => {
-    if (initialData) {
-      setProductName(initialData.productName || ''); // Certifique-se de que não seja undefined
-      setProductPrice(initialData.productPrice || 0); // Valor numérico não deve ser undefined
+    // Este efeito só será executado se `initialData` mudar
+    if (initialData.productName !== undefined) {
+      setProductName(initialData.productName || '');
+    }
+    if (initialData.productPrice !== undefined) {
+      setProductPrice(initialData.productPrice || 0);
+    }
+    if (initialData.productDescription !== undefined) {
       setProductDescription(initialData.productDescription || '');
-      setPreviewImage(initialData.productImage ? `http://localhost:4040/images/${initialData.productImage}` : null);
+    }
+    if (initialData.productImage) {
+      setPreviewImage(`${api.defaults.baseURL}/images/${initialData.productImage}`);
       setImageName(initialData.productImage || 'Nenhuma imagem selecionada');
     }
   }, [initialData]);
@@ -22,23 +32,30 @@ const ProductForm = ({ initialData = {}, onSubmit }) => {
     const file = e.target.files[0];
     setProductImage(file);
 
-    // Atualizar a pré-visualização com a nova imagem selecionada
     if (file) {
       setPreviewImage(URL.createObjectURL(file));
-      setImageName(file.name); // Atualiza o nome da imagem exibido ao lado do botão
+      setImageName(file.name);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('productName', productName);
-    formData.append('productPrice', productPrice);
-    formData.append('productDescription', productDescription);
-    if (productImage) {
-      formData.append('productImage', productImage);
+
+    // Confirmação de Cadastro/Atualização
+    const confirmationMessage = initialData._id 
+      ? 'Tem certeza que deseja atualizar este produto?' 
+      : 'Tem certeza que deseja cadastrar este produto?';
+    
+    if (window.confirm(confirmationMessage)) {
+      const formData = new FormData();
+      formData.append('productName', productName);
+      formData.append('productPrice', productPrice);
+      formData.append('productDescription', productDescription);
+      if (productImage) {
+        formData.append('productImage', productImage);
+      }
+      onSubmit(formData);
     }
-    onSubmit(formData);
   };
 
   return (
@@ -91,11 +108,9 @@ const ProductForm = ({ initialData = {}, onSubmit }) => {
             type="file"
             onChange={handleImageChange}
           />
-          {/* Exibe o nome da imagem ao lado do botão de upload */}
           <span className="text-sm text-gray-600 dark:text-gray-400">{imageName}</span>
         </label>
 
-        {/* Pré-visualização da imagem existente */}
         {previewImage && (
           <div className="mt-4">
             <span className="text-gray-700 dark:text-gray-400">Pré-visualização da Imagem</span>
