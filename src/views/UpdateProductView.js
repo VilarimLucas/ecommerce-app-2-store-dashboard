@@ -30,7 +30,7 @@ const UpdateProductView = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container px-6 mx-auto grid">
       <h2 className="text-left my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Atualizar Produto</h2>
       {product ? <ProductForm initialData={product} onSubmit={handleFormSubmit} /> : <p>Carregando...</p>}
     </div>

@@ -16,7 +16,7 @@ const NewProductView = () => {
   };
 
   return (
-    <div>
+    <div className="container px-6 mx-auto grid">
       <h2 className="text-left my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
         Cadastro de Produto
       </h2>

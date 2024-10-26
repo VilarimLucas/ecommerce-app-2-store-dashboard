@@ -2119,3 +2119,12 @@ print and (-ms-high-contrast:none) {
         grid-template-columns: repeat(4, minmax(0, 1fr))
     }
 }
+
+
+  #footer {
+    margin-top: auto; /* Empurra o footer para o final */
+    background-color: #f8f8f8;
+    padding: 10px 0;
+    width: 100%; /* Ocupa toda a largura */
+  }
+  
